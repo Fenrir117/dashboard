@@ -2,7 +2,7 @@
 session_start();
 
 // connect to database
-$db = new PDO('mysql:host=localhost;dbname=multi_login', 'root', 'online@2017');
+$db = new PDO('mysql:host=localhost;dbname=multi_login', 'root', '');
 
 // variable declaration
 $username = "";
@@ -10,30 +10,35 @@ $email    = "";
 $season    = "";
 $errors   = array();
 
-// call the register() function if register_btn is clicked
+// appel des function avec leur bouton respectif
+
+// Function d'inscription
 if (isset($_POST['register_btn'])) {
 	register();
 }
-
+// Function création saisons 
 if (isset($_POST['season_btn'])) {
 	createSeason();
 }
 
+// Function de création de notification
 if (isset($_POST['notif_btn'])) {
 	createNotif();
 }
 
+// Function liée au bouton d'accepter la disponibilitée
 if (isset($_POST['notif_accept'])) {
 	acceptNotif(); 
 }
 
+// Function liée au bouton de refus la disponibilitée
 if (isset($_POST['notif_refused'])) {
 	refusedNotif();
 }
 
 
 
-// REGISTER USER
+// Fonction d'enregistrement
 function register()
 {
 	// call these variables with the global keyword to make them available in function
@@ -118,6 +123,7 @@ function register()
 	}
 }
 
+//Function de création de saisons
 function createSeason()
 {
 
@@ -139,10 +145,11 @@ function createSeason()
 	}
 }
 
+//Function de création de notification
 function createNotif()
 {
 	// ajout de la date de l'evenement
-	global $db, $errors, $users;
+	global $db, $errors;
 	$dateEvent = $_POST['date_event'];
 	$lieuMatch = $_POST['lieu_event'];
 	$dispoEvent = $_POST['dispo_event'];
@@ -170,6 +177,8 @@ function createNotif()
 
 }
 
+
+//Function d'acceptation de Notif
 function acceptNotif()
 {
 	global $errors,$db, $idUser;
@@ -179,51 +188,55 @@ function acceptNotif()
 	echo ($date_accept);
 	echo ($place_dispo);
 	echo ($idUser);
+
 	if (empty($place_dispo)) {
 		array_push($errors, "Veuillez indiqué le nombres de places disponible");
 	} else {
+
 		$usernameLog = $_SESSION['user']['username'];
-		// echo $usernameLog;
 	
 		$sql_u = "SELECT id FROM users WHERE username='$usernameLog'";
 		$sth_u = $db->prepare($sql_u);
-		// $sth->bindParam(':username', $usernameLog, PDO::PARAM_INT);
 		$sth_u->execute();
 		$result = $sth_u->fetch(PDO::FETCH_ASSOC);
 		
 		$idUser = $result['id'];
 		$reponseAccept = 1;
 
+		//requete selection d'une date det d'un user
 		$sql_verif = "SELECT * FROM response_parent WHERE jour_event='$date_accept' AND id_user='$idUser'";
 		$sth_verif = $db->prepare($sql_verif);
 		$sth_verif->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
 		$sth_verif->bindParam(':id_user', $idUser, PDO::PARAM_INT);
 		$sth_verif->execute();
 		$result_verif = $sth_verif->fetchAll(PDO::FETCH_ASSOC);
+
 		if (count($result_verif) ==0) {
 			
+		//requete insertion des valeur dans les colonnes jour_event(date d'evenement), id_user(id de l'utilisateur), reponse(oui ou non repondu par le parent), places(places disponible par les parents)
 		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse, places) VALUES(:jour_event, :id_user, :reponse, :places)";
 		$sth = $db->prepare($sql_b);
 		$sth->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
 		$sth->bindParam(':id_user', $idUser, PDO::PARAM_INT);
 		$sth->bindParam(':reponse', $reponseAccept, PDO::PARAM_BOOL);
 		$sth->bindParam(':places', $place_dispo, PDO::PARAM_STR);
-
 		$sth->execute();
 		}
 
+		//Double requete necessaire?
+		// $sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse, places) VALUES(:jour_event, :id_user, :reponse, :places)";
+		// $sth = $db->prepare($sql_b);
+		// $sth->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
+		// $sth->bindParam(':id_user', $idUser, PDO::PARAM_INT);
+		// $sth->bindParam(':reponse', $reponseAccept, PDO::PARAM_BOOL);
+		// $sth->bindParam(':places', $place_dispo, PDO::PARAM_STR);
 
-		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse, places) VALUES(:jour_event, :id_user, :reponse, :places)";
-		$sth = $db->prepare($sql_b);
-		$sth->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
-		$sth->bindParam(':id_user', $idUser, PDO::PARAM_INT);
-		$sth->bindParam(':reponse', $reponseAccept, PDO::PARAM_BOOL);
-		$sth->bindParam(':places', $place_dispo, PDO::PARAM_STR);
-
-		$sth->execute();
+		// $sth->execute();
 	}
 }
 
+
+// Function affichage d'erreur
 function display_error()
 {
 	global $errors;
@@ -237,6 +250,7 @@ function display_error()
 	}
 }
 
+// Function d'appel de login
 function isLoggedIn()
 {
 	if (isset($_SESSION['user'])) {

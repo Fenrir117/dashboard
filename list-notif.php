@@ -20,6 +20,8 @@ if (!isLoggedIn()) {
 </head>
 
 <body>
+
+
 <?php
 include('header.php');
 ?>
