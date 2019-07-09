@@ -9,7 +9,7 @@
 
       <ul class="navbar-nav ml-auto nav-flex-icons">
         <li class="nav-item pt-1">
-          <a class="nav-link waves-effect waves-light" href="/list-notif.php">1
+          <a class="nav-link waves-effect waves-light" href="/list-notif.php"><?php ?>
             <i class="fas fa-envelope"></i>
           </a>
         </li>

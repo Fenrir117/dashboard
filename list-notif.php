@@ -81,13 +81,13 @@ include('header.php');
         echo $score.'<br>';
         echo($result_obj[0]["places_necessaires"]);
         echo '<br>';
+        echo ($sql["jour_event"].'<br>');
+
         
-        
-        if ($score > $result_obj[0]["places_necessaires"]) {
+        if ($score >= $result_obj[0]["places_necessaires"]) {
           echo 'objectif atteint';
         }
         else if (count($result_rep) == 0) {
-          echo ($sql["jour_event"].'<br>');
 
           echo '<form method="post" action="list-notif.php">
             <input type="hidden" name="date_accept" value="' . $sql["jour_event"] . '" >
@@ -110,12 +110,6 @@ include('header.php');
           echo 'repondu<br><br>';
         }
       }
-
-
-
-
-
-
 
       ?>
     </ul>

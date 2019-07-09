@@ -118,17 +118,6 @@ function register()
 	}
 }
 
-// return user array from their id
-// function getUserById($id)
-// {
-// 	global $db;
-// 	$query = "SELECT * FROM users WHERE id=" . $id;
-// 	$result = mysqli_query($db, $query);
-// 	$user = mysqli_fetch_assoc($result);
-// 	echo'ici';
-// 	return $user;
-// }
-
 function createSeason()
 {
 
@@ -168,10 +157,6 @@ function createNotif()
 	if (empty($dispoEvent)) {
 		array_push($errors, "Dispo is required");
 	}
-	// $sql = "INSERT INTO saison (date_saison) 
-	// VALUES('$season')";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
 
 	// Requete insert mon formulaire dans la table planning
 	$sql = "INSERT INTO planning (jour_event, lieu, places_necessaires, places_restantes) 
@@ -183,30 +168,6 @@ function createNotif()
 	$sth->bindParam(':places_restantes', $dispoEvent, PDO::PARAM_STR);
 	$sth->execute();
 
-
-
-	// je vais sortir mes date d'evenement de la table planning
-	// $stmt = $db->prepare("SELECT * FROM planning");
-	// if ($stmt->execute(array())) {
-	// while ($row = $stmt->fetch()) {
-	// echo $row[0]. '<br>';
-	// }
-	// }
-
-	// $sql_u = "SELECT id FROM users";
-	// $sth_u = $db->prepare($sql_u);
-	// $sth_u->execute();
-	// $result = $sth_u->fetchAll(PDO::FETCH_ASSOC);
-
-	// // output data of each row
-	// foreach ($result as $users => $sql_u) {
-	// 	$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse) VALUES(:jour_event, :id_user, :reponse)";
-	// 	$sth = $db->prepare($sql_b);
-	// 	$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
-	// 	$sth->bindParam(':id_user', $sql_u["id"], PDO::PARAM_INT);
-	// 	$sth->bindParam(':reponse', $noReponse, PDO::PARAM_STR);
-	// 	$sth->execute();
-	// }
 }
 
 function acceptNotif()
@@ -233,14 +194,24 @@ function acceptNotif()
 		$idUser = $result['id'];
 		$reponseAccept = 1;
 
+		$sql_verif = "SELECT * FROM response_parent WHERE jour_event='$date_accept' AND id_user='$idUser'";
+		$sth_verif = $db->prepare($sql_verif);
+		$sth_verif->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
+		$sth_verif->bindParam(':id_user', $idUser, PDO::PARAM_INT);
+		$sth_verif->execute();
+		$result_verif = $sth_verif->fetchAll(PDO::FETCH_ASSOC);
+		if (count($result_verif) ==0) {
+			
+		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse, places) VALUES(:jour_event, :id_user, :reponse, :places)";
+		$sth = $db->prepare($sql_b);
+		$sth->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
+		$sth->bindParam(':id_user', $idUser, PDO::PARAM_INT);
+		$sth->bindParam(':reponse', $reponseAccept, PDO::PARAM_BOOL);
+		$sth->bindParam(':places', $place_dispo, PDO::PARAM_STR);
 
-		// 	$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse) VALUES(:jour_event, :id_user, :reponse)";
+		$sth->execute();
+		}
 
-		// $sql = "UPDATE response_parent SET reponse = 1, places = $place_dispo WHERE id_user = $idUser AND jour_event = '$date_accept'";
-		// $sth = $db->prepare($sql);
-		// $sth->bindParam(':id', $idUser, PDO::PARAM_STR);
-		// $sth->bindParam(':jour_event', $date_accept, PDO::PARAM_STR);
-		// $sth->execute();
 
 		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse, places) VALUES(:jour_event, :id_user, :reponse, :places)";
 		$sth = $db->prepare($sql_b);
