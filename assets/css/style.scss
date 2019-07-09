@@ -86,3 +86,19 @@ form, .content {
 	display: block;
 	clear: both;
 }
+
+.custom-nav {
+    height:50px;
+    background-color: rgb(0, 0, 114);
+
+    img {
+        height:30px;
+    }
+
+    .username-connect {
+        strong {
+            line-height:47px;
+            color: grey;
+        }
+    }
+}

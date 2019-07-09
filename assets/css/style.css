@@ -42,7 +42,7 @@ form, .content {
   border: 1px solid gray;
 }
 
-#user_type {
+#user_type, #saison_user {
   height: 40px;
   width: 98%;
   padding: 5px 10px;
@@ -51,6 +51,8 @@ form, .content {
   border-radius: 5px;
   border: 1px solid gray;
 }
+
+
 
 .btn {
   padding: 10px;
@@ -96,5 +98,19 @@ form, .content {
   content: "";
   display: block;
   clear: both;
+}
+
+.custom-nav {
+  height: 50px;
+  background-color: #000072;
+}
+
+.custom-nav img {
+  height: 30px;
+}
+
+.custom-nav .username-connect strong {
+  line-height: 47px;
+  color: grey;
 }
 /*# sourceMappingURL=style.css.map */
